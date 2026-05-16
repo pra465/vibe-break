@@ -7,8 +7,9 @@ const GAMES = {
   snake:   window.SnakeGame,
   predict: window.PredictGame,
   runner:  window.RunnerGame,
-  hanoi:   window.HanoiGame,
   shooter: window.ShooterGame,
+  chess:   window.ChessGame,
+  taxi:    window.TaxiGame,
 };
 
 const container  = document.getElementById('game-container');

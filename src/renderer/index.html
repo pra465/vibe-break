@@ -59,7 +59,9 @@
   .shell .predict-root,
   .shell canvas,
   .shell .runner-wrap,
-  .shell .shooter-wrap {
+  .shell .shooter-wrap,
+  .shell .chess-board,
+  .shell .taxi-wrap {
     -webkit-app-region: no-drag;
   }
   header {
@@ -398,7 +400,7 @@
     -webkit-user-select: none;
     user-select: none;
   }
-  /* ---------- shared nudge toast (used by Runner, Hanoi, ...) ---------- */
+  /* ---------- shared nudge toast (used by Runner, ...) ---------- */
   .shared-nudge-toast {
     position: absolute;
     top: 6px;
@@ -435,80 +437,82 @@
     color: var(--accent-bright);
   }
 
-  /* ---------- Hanoi game ---------- */
-  .hanoi-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    flex-shrink: 0;
-    margin-bottom: 4px;
-  }
-  .hanoi-label {
-    color: var(--muted);
-    font-size: 11px;
-  }
-  .hanoi-controls select {
-    padding: 4px 6px;
-    font-size: 11px;
-  }
-  .hanoi-seg {
-    display: inline-flex;
-    background: var(--card);
-    border: 0.5px solid var(--border);
-    border-radius: 8px;
-    padding: 2px;
-    gap: 2px;
-  }
-  .hanoi-seg-btn {
-    flex: 0 0 auto;
-    padding: 3px 10px;
-    font-size: 11px;
-    border-radius: 6px;
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: inherit;
-    transition: background 100ms ease, color 100ms ease;
-  }
-  .hanoi-seg-btn:hover {
-    background: rgba(255, 255, 255, 0.04);
-    color: var(--text);
-  }
-  .hanoi-seg-btn.active {
-    background: rgba(127, 119, 221, 0.20);
-    color: #cec9f7;
-  }
-  .hanoi-stats {
-    font-family: "SF Mono", Menlo, Consolas, monospace;
-    font-size: 11px;
-    color: var(--muted);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 6px;
-    flex-shrink: 0;
-    min-height: 16px;
-    line-height: 1.4;
-  }
-  .hanoi-stats .accent { color: var(--text); }
-  .hanoi-stats .goal   { color: var(--goal); }
-  .hanoi-wrap {
+  /* ---------- Taxi game ---------- */
+  .taxi-wrap {
     position: relative;
     flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     min-height: 0;
+    border-radius: 8px;
     overflow: hidden;
+    background: #1a1a1e;
   }
-  .hanoi-canvas {
+  .taxi-canvas {
     display: block;
-    cursor: pointer;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: default;
     -webkit-user-select: none;
     user-select: none;
+  }
+
+  /* ---------- Chess Puzzles ---------- */
+  .chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    aspect-ratio: 1;
+    flex: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 0.5px solid var(--border);
+  }
+  .chess-board.shake {
+    animation: chess-shake 0.32s ease;
+  }
+  @keyframes chess-shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+  }
+  .chess-sq {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 80ms ease;
+  }
+  .chess-sq.light { background: #3b3b46; }
+  .chess-sq.dark  { background: #25252c; }
+  .chess-sq.selected {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .chess-sq.last-move::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(127, 119, 221, 0.18);
+    pointer-events: none;
+  }
+  .chess-sq.wrong {
+    box-shadow: inset 0 0 0 2px var(--wrong);
+  }
+  .chess-piece {
+    font-size: 26px;
+    line-height: 1;
+    pointer-events: none;
+    font-family: "Apple Symbols", "Segoe UI Symbol", "DejaVu Sans", sans-serif;
+  }
+  .chess-piece.white {
+    color: #f4f4f6;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.55);
+  }
+  .chess-piece.black {
+    color: #15151a;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.18);
   }
 
   /* ---------- Shooter game ---------- */
@@ -545,8 +549,9 @@
         <option value="snake">Snake</option>
         <option value="predict">Predict</option>
         <option value="runner">Runner</option>
-        <option value="hanoi">Hanoi</option>
         <option value="shooter">Shooter</option>
+        <option value="chess">Chess</option>
+        <option value="taxi">Taxi</option>
       </select>
       <div class="pill" id="status">0 moves</div>
     </div>
@@ -566,8 +571,9 @@
 <script src="games/snake.js"></script>
 <script src="games/predict.js"></script>
 <script src="games/runner.js"></script>
-<script src="games/hanoi.js"></script>
 <script src="games/shooter.js"></script>
+<script src="games/chess.js"></script>
+<script src="games/taxi.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
