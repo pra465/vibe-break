@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Vibe Break</title>
+
+<!-- highlight.js for the Predict game's syntax highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<style>
+  :root {
+    --bg: rgba(28, 28, 32, 0.92);
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #e8e8ea;
+    --muted: #8a8a93;
+    --accent: #7f77dd;
+    --accent-bright: #9d96e8;
+    --goal: #97c459;
+    --hint: #fac775;
+    --wall: #1a1a1e;
+    --floor: #2a2a30;
+    --code-bg: #1a1a1f;
+    --correct: #97c459;
+    --wrong: #e26d6d;
+    --shooter-bg: #0a0a14;
+    --shooter-grid: rgba(255, 255, 255, 0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    color: var(--text);
+    background: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  body {
+    padding: 12px;
+  }
+  .shell {
+    background: var(--bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    -webkit-app-region: drag;
+  }
+  .shell button,
+  .shell select,
+  .shell input,
+  .shell textarea,
+  .shell .board,
+  .shell .predict-root,
+  .shell canvas,
+  .shell .runner-wrap,
+  .shell .shooter-wrap {
+    -webkit-app-region: no-drag;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .title {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .pill {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(127, 119, 221, 0.18);
+    color: #cec9f7;
+    white-space: nowrap;
+  }
+  .pill.win {
+    background: rgba(151, 196, 89, 0.2);
+    color: #c9e29c;
+  }
+  #game-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 4px 0;
+    min-height: 0;
+  }
+  .board {
+    display: grid;
+    gap: 2px;
+    background: var(--border);
+    padding: 2px;
+    border-radius: 8px;
+    flex: 1;
+    aspect-ratio: 1;
+  }
+  .cell {
+    border-radius: 2px;
+    transition: background 80ms ease;
+    cursor: pointer;
+  }
+  .cell.wall { background: var(--wall); cursor: default; }
+  .cell.floor { background: var(--floor); }
+  .cell.player { background: var(--accent); }
+  .cell.goal { background: var(--goal); }
+  .cell.hint { background: var(--hint); }
+  .cell.trail { background: rgba(127, 119, 221, 0.25); }
+  .cell.snake-body { background: var(--accent); }
+  .cell.snake-head { background: var(--accent-bright); }
+  .cell.snake-food { background: var(--goal); }
+  .controls {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .controls:empty { display: none; }
+  button {
+    flex: 1;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 100ms ease;
+  }
+  button:hover { background: rgba(255, 255, 255, 0.08); }
+  button:active { transform: scale(0.98); }
+  button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  button:disabled:hover { background: var(--card); }
+  button:disabled:active { transform: none; }
+  select {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .footer {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  kbd {
+    background: rgba(255,255,255,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: -apple-system;
+  }
+
+  /* ---------- Predict game ---------- */
+  .predict-root {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .predict-filters {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .predict-filters select {
+    flex: 1;
+  }
+  .snippet-card {
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    transition: border-color 200ms ease;
+  }
+  .snippet-card.flash-correct {
+    animation: pulse-correct 600ms ease;
+    border-color: var(--correct);
+  }
+  .snippet-card.flash-wrong {
+    animation: shake 250ms ease;
+    border-color: var(--wrong);
+  }
+  .snippet-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .lang-tag {
+    background: rgba(127, 119, 221, 0.18);
+    color: #cec9f7;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .pips {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .pip {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .pip.filled {
+    background: var(--accent);
+  }
+  .code-block {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 12px;
+    line-height: 1.55;
+    overflow-x: auto;
+    margin: 0;
+  }
+  .code-line {
+    display: flex;
+  }
+  .line-num {
+    min-width: 22px;
+    color: var(--muted);
+    text-align: right;
+    margin-right: 10px;
+    user-select: none;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .line-content {
+    flex: 1;
+    white-space: pre;
+  }
+  .hints-area {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hint-card {
+    background: rgba(250, 199, 117, 0.06);
+    border-left: 2px solid var(--hint);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .hint-card strong {
+    color: var(--text);
+    margin-right: 4px;
+    font-weight: 500;
+  }
+  .answer-area {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .answer-input {
+    background: var(--code-bg);
+    border: 0.5px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    width: 100%;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .answer-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .choice-btn {
+    text-align: left;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    cursor: pointer;
+    flex: none;
+    white-space: pre;
+    transition: background 100ms ease, border-color 100ms ease;
+  }
+  .choice-btn:hover { background: rgba(255, 255, 255, 0.06); }
+  .choice-btn.correct {
+    border-color: var(--correct);
+    background: rgba(151, 196, 89, 0.10);
+  }
+  .choice-btn.wrong {
+    border-color: var(--wrong);
+    background: rgba(226, 109, 109, 0.10);
+  }
+  .choice-btn:disabled { cursor: default; }
+  .feedback {
+    font-size: 11px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    line-height: 1.5;
+  }
+  .feedback.correct {
+    background: rgba(151, 196, 89, 0.10);
+    color: #c9e29c;
+  }
+  .feedback.wrong {
+    background: rgba(226, 109, 109, 0.10);
+    color: #f0b3b3;
+  }
+  .feedback .expected {
+    display: block;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    color: var(--text);
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    white-space: pre-wrap;
+  }
+  .feedback .explanation {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+  }
+  @keyframes pulse-correct {
+    0%   { box-shadow: 0 0 0 0 rgba(151, 196, 89, 0.45); }
+    50%  { box-shadow: 0 0 0 6px rgba(151, 196, 89, 0.15); }
+    100% { box-shadow: 0 0 0 0 rgba(151, 196, 89, 0); }
+  }
+
+  /* ---------- Runner game ---------- */
+  .runner-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .runner-canvas {
+    display: block;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  /* ---------- shared nudge toast (used by Runner, Hanoi, ...) ---------- */
+  .shared-nudge-toast {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    font-size: 12px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    transform: translate(-50%, -8px);
+    opacity: 0;
+    pointer-events: auto;
+    white-space: nowrap;
+    transition: transform 200ms ease, opacity 200ms ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 5;
+  }
+  .shared-nudge-toast.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  .shared-nudge-toast .dismiss {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .shared-nudge-toast .dismiss:hover {
+    color: var(--accent-bright);
+  }
+
+  /* ---------- Hanoi game ---------- */
+  .hanoi-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-bottom: 4px;
+  }
+  .hanoi-label {
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .hanoi-controls select {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  .hanoi-seg {
+    display: inline-flex;
+    background: var(--card);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .hanoi-seg-btn {
+    flex: 0 0 auto;
+    padding: 3px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 100ms ease, color 100ms ease;
+  }
+  .hanoi-seg-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+  }
+  .hanoi-seg-btn.active {
+    background: rgba(127, 119, 221, 0.20);
+    color: #cec9f7;
+  }
+  .hanoi-stats {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+    min-height: 16px;
+    line-height: 1.4;
+  }
+  .hanoi-stats .accent { color: var(--text); }
+  .hanoi-stats .goal   { color: var(--goal); }
+  .hanoi-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .hanoi-canvas {
+    display: block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ---------- Shooter game ---------- */
+  .shooter-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .shooter-canvas {
+    display: block;
+    background: var(--shooter-bg);
+    border-radius: 8px;
+    cursor: crosshair;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <div class="title" id="title">Vibe Break</div>
+      <div class="subtitle" id="subtitle">while your code generates</div>
+    </div>
+    <div class="header-right">
+      <select id="game-picker" title="Game">
+        <option value="maze">Maze</option>
+        <option value="snake">Snake</option>
+        <option value="predict">Predict</option>
+        <option value="runner">Runner</option>
+        <option value="hanoi">Hanoi</option>
+        <option value="shooter">Shooter</option>
+      </select>
+      <div class="pill" id="status">0 moves</div>
+    </div>
+  </header>
+
+  <div id="game-container"></div>
+
+  <div class="controls" id="controls"></div>
+
+  <div class="footer">
+    Arrow keys / WASD · <kbd>⌘⇧P</kbd> to hide
+  </div>
+</div>
+
+<script src="lib/nudge.js"></script>
+<script src="games/maze.js"></script>
+<script src="games/snake.js"></script>
+<script src="games/predict.js"></script>
+<script src="games/runner.js"></script>
+<script src="games/hanoi.js"></script>
+<script src="games/shooter.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+    "name": "vibe-break",
+    "version": "0.1.0",
+    "description": "A corner mini-game for the dead time while AI generates code",
+    "main": "src/main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder --mac"
+    },
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^31.0.0",
+        "electron-builder": "^24.13.3"
+    },
+    "build": {
+        "appId": "com.you.vibebreak",
+        "productName": "Vibe Break",
+        "mac": {
+            "category": "public.app-category.games",
+            "target": {
+                "target": "dmg",
+                "arch": "universal"
+            }
+        },
+        "files": [
+            "src/**/*",
+            "package.json"
+        ]
+    }
+}

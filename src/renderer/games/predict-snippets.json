@@ -1,0 +1,680 @@
+[
+  {
+    "id": "py-001",
+    "language": "python",
+    "difficulty": 1,
+    "answerMode": "choice",
+    "code": "def f(x, lst=[]):\n    lst.append(x)\n    return lst\n\nprint(f(1))\nprint(f(2))",
+    "answer": "[1]\n[1, 2]",
+    "acceptedAnswers": ["[1]\n[1, 2]"],
+    "choices": [
+      "[1]\n[1, 2]",
+      "[1]\n[2]",
+      "[1, 2]\n[1, 2]",
+      "TypeError: list has no attribute 'append'"
+    ],
+    "hints": [
+      "Default argument values are evaluated once, when the function is defined — not on each call.",
+      "Both calls to f() that omit `lst` see the SAME list object stored in f.__defaults__.",
+      "First call: append(1) → [1]. Second call: same list, append(2) → [1, 2]."
+    ],
+    "explanation": "Mutable default arguments are a classic Python pitfall. The default `[]` is created once and shared across all calls that don't pass an explicit list."
+  },
+  {
+    "id": "py-002",
+    "language": "python",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "a = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)",
+    "answer": "[1, 2, 3, 4]",
+    "acceptedAnswers": ["[1, 2, 3, 4]", "[1,2,3,4]"],
+    "hints": [
+      "`b = a` does not copy the list.",
+      "`a` and `b` are two names for the same list object.",
+      "Modifying through `b` modifies the list `a` also points to."
+    ],
+    "explanation": "Assignment in Python binds names to objects; it does not copy. Use `a.copy()`, `list(a)`, or `a[:]` to get an independent list."
+  },
+  {
+    "id": "py-003",
+    "language": "python",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "print(True + True + False)",
+    "answer": "2",
+    "acceptedAnswers": ["2"],
+    "hints": [
+      "In Python, `bool` is a subclass of `int`.",
+      "True is 1, False is 0.",
+      "1 + 1 + 0 = ?"
+    ],
+    "explanation": "Booleans inherit from int in Python, so they participate in arithmetic. True is 1 and False is 0."
+  },
+  {
+    "id": "py-004",
+    "language": "python",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "d = {}\nd['c'] = 3\nd['a'] = 1\nd['b'] = 2\nprint(list(d.keys()))",
+    "answer": "['c', 'a', 'b']",
+    "acceptedAnswers": ["['c', 'a', 'b']"],
+    "choices": [
+      "['c', 'a', 'b']",
+      "['a', 'b', 'c']",
+      "['b', 'a', 'c']",
+      "dict_keys(['c', 'a', 'b'])"
+    ],
+    "hints": [
+      "What ordering guarantees does dict have in modern Python?",
+      "As of Python 3.7, dicts preserve a specific order.",
+      "Insertion order is preserved: c, then a, then b."
+    ],
+    "explanation": "Since Python 3.7, dicts officially preserve insertion order (CPython 3.6 had it as an implementation detail)."
+  },
+  {
+    "id": "py-005",
+    "language": "python",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "print(-7 % 3)",
+    "answer": "2",
+    "acceptedAnswers": ["2"],
+    "hints": [
+      "Python's `%` is not the same as C's.",
+      "Python's modulo always returns a result with the same sign as the divisor.",
+      "-7 = -3 * 3 + 2, so -7 % 3 = 2 (not -1 like in C/Java)."
+    ],
+    "explanation": "Python uses floor-division semantics, so `a % b` always has the same sign as `b`. Languages like C and Java use truncated division, which would give -1."
+  },
+  {
+    "id": "py-006",
+    "language": "python",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "print(1 < 2 < 3)\nprint(1 < 2 > 3)\nprint(3 > 2 < 1)",
+    "answer": "True\nFalse\nFalse",
+    "acceptedAnswers": ["True\nFalse\nFalse"],
+    "choices": [
+      "True\nFalse\nFalse",
+      "True\nTrue\nFalse",
+      "True\nFalse\nTrue",
+      "SyntaxError"
+    ],
+    "hints": [
+      "Python supports chained comparisons that don't behave like in most other languages.",
+      "`a < b < c` is shorthand for `a < b and b < c`, with `b` evaluated once.",
+      "1<2<3 = T and T = True; 1<2>3 = T and F = False; 3>2<1 = T and F = False."
+    ],
+    "explanation": "Python's chained comparisons combine adjacent comparisons with logical AND. This is rare among programming languages."
+  },
+  {
+    "id": "py-007",
+    "language": "python",
+    "difficulty": 3,
+    "answerMode": "choice",
+    "code": "funcs = [lambda: i for i in range(3)]\nprint([f() for f in funcs])",
+    "answer": "[2, 2, 2]",
+    "acceptedAnswers": ["[2, 2, 2]"],
+    "choices": [
+      "[2, 2, 2]",
+      "[0, 1, 2]",
+      "[0, 0, 0]",
+      "[3, 3, 3]"
+    ],
+    "hints": [
+      "Closures capture variables by reference, not by value.",
+      "All three lambdas share the SAME `i` from the comprehension's scope.",
+      "By the time the lambdas run, the comprehension has finished and i = 2."
+    ],
+    "explanation": "Late binding: closures look up the variable when called, not when defined. Fix with a default argument: `lambda i=i: i`."
+  },
+  {
+    "id": "js-001",
+    "language": "javascript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "console.log(typeof null);",
+    "answer": "object",
+    "acceptedAnswers": ["object"],
+    "hints": [
+      "`typeof` returns a string identifying a type.",
+      "There's a famous bug in JavaScript's typeof for one specific value.",
+      "It's the historical result of how null was tagged in early JS engines — 'object'."
+    ],
+    "explanation": "`typeof null` returning 'object' is one of the oldest bugs in JavaScript, kept for backward compatibility. Use `value === null` to test for null."
+  },
+  {
+    "id": "js-002",
+    "language": "javascript",
+    "difficulty": 1,
+    "answerMode": "choice",
+    "code": "console.log(0.1 + 0.2);",
+    "answer": "0.30000000000000004",
+    "acceptedAnswers": ["0.30000000000000004"],
+    "choices": [
+      "0.30000000000000004",
+      "0.3",
+      "0.30000000000000001",
+      "0.299999999999999"
+    ],
+    "hints": [
+      "Numbers in JS are IEEE-754 double-precision floats.",
+      "0.1 and 0.2 cannot be represented exactly in binary.",
+      "The sum has a tiny rounding error visible in the trailing digits."
+    ],
+    "explanation": "Floating-point arithmetic isn't exact. 0.1 and 0.2 are infinite repeating binary fractions, so their sum is approximate. This is true in nearly every language using IEEE-754."
+  },
+  {
+    "id": "js-003",
+    "language": "javascript",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "console.log([] + []);",
+    "answer": "(empty string)",
+    "acceptedAnswers": ["(empty string)", ""],
+    "choices": [
+      "(empty string)",
+      "[]",
+      "[][]",
+      "TypeError"
+    ],
+    "hints": [
+      "The `+` operator on arrays first converts them to primitives.",
+      "Array.prototype.toString() joins elements with commas; `[].toString()` is the empty string.",
+      "So this is '' + '' = '' (an empty string)."
+    ],
+    "explanation": "JS converts both operands to primitives via toString. An empty array's string form is '', so [] + [] is just an empty string."
+  },
+  {
+    "id": "js-004",
+    "language": "javascript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "console.log(0 == \"0\");",
+    "answer": "true",
+    "acceptedAnswers": ["true"],
+    "hints": [
+      "`==` performs type coercion before comparing.",
+      "When comparing a number and a string, the string is converted to a number.",
+      "`Number(\"0\")` is 0, so this is 0 == 0."
+    ],
+    "explanation": "`==` coerces operands to a common type. Use `===` to avoid surprise coercions."
+  },
+  {
+    "id": "js-005",
+    "language": "javascript",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "console.log(x);\nvar x = 5;",
+    "answer": "undefined",
+    "acceptedAnswers": ["undefined"],
+    "choices": [
+      "undefined",
+      "5",
+      "ReferenceError: x is not defined",
+      "null"
+    ],
+    "hints": [
+      "`var` declarations are hoisted to the top of the function/script.",
+      "Only the DECLARATION is hoisted, not the assignment.",
+      "So x exists (as undefined) before the line `x = 5` runs."
+    ],
+    "explanation": "`var` hoists the declaration but not the initializer. With `let` or `const` you'd get a ReferenceError due to the temporal dead zone."
+  },
+  {
+    "id": "js-006",
+    "language": "javascript",
+    "difficulty": 3,
+    "answerMode": "choice",
+    "code": "const arr = [10, 20, 30];\narr.foo = 'bar';\nconst out = [];\nfor (const k in arr) out.push(k);\nconsole.log(out);",
+    "answer": "[ '0', '1', '2', 'foo' ]",
+    "acceptedAnswers": ["[ '0', '1', '2', 'foo' ]", "['0', '1', '2', 'foo']"],
+    "choices": [
+      "[ '0', '1', '2', 'foo' ]",
+      "[ 0, 1, 2, 'foo' ]",
+      "[ 10, 20, 30, 'bar' ]",
+      "[ 'foo', '0', '1', '2' ]"
+    ],
+    "hints": [
+      "`for...in` iterates over enumerable property KEYS, not values.",
+      "Keys are always strings, even array indices.",
+      "It also picks up custom properties added to the array, like `foo`."
+    ],
+    "explanation": "Use `for...of` or `forEach` for arrays — `for...in` is for object keys and surfaces non-index properties as well."
+  },
+  {
+    "id": "js-007",
+    "language": "javascript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "console.log(!!\"false\");",
+    "answer": "true",
+    "acceptedAnswers": ["true"],
+    "hints": [
+      "`!!x` is a common idiom to coerce x to a boolean.",
+      "What matters is whether the value is truthy or falsy, not its content.",
+      "Any non-empty string is truthy — including the literal string 'false'."
+    ],
+    "explanation": "Truthiness is about the type and emptiness, not the textual content. The only falsy strings are empty strings."
+  },
+  {
+    "id": "ts-001",
+    "language": "typescript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "enum Color { Red, Green, Blue }\nconsole.log(Color.Green);",
+    "answer": "1",
+    "acceptedAnswers": ["1"],
+    "hints": [
+      "Numeric enums auto-assign values starting at 0.",
+      "Red = 0, Green = 1, Blue = 2.",
+      "So Color.Green is 1."
+    ],
+    "explanation": "TypeScript's numeric enums start at 0 by default and increment by 1 unless given explicit values."
+  },
+  {
+    "id": "ts-002",
+    "language": "typescript",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "enum Color { Red, Green, Blue }\nconsole.log(Color[1]);",
+    "answer": "Green",
+    "acceptedAnswers": ["Green", "green"],
+    "hints": [
+      "Numeric enums get a reverse mapping at runtime.",
+      "Color.Green is 1; what's the reverse — given 1, what's the name?",
+      "Color[1] looks up the enum member whose value is 1."
+    ],
+    "explanation": "TypeScript compiles numeric enums into objects with both forward (name → value) and reverse (value → name) mappings. String enums do NOT get reverse mapping."
+  },
+  {
+    "id": "ts-003",
+    "language": "typescript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "const arr: readonly number[] = [1, 2, 3];\nconsole.log(arr.length);",
+    "answer": "3",
+    "acceptedAnswers": ["3"],
+    "hints": [
+      "`readonly` is a TypeScript-only annotation; it disappears at runtime.",
+      "At runtime this is just a normal array of length 3.",
+      "Reading `.length` works regardless of readonly."
+    ],
+    "explanation": "TypeScript types are erased at compile time. `readonly` only restricts what the type-checker allows you to write — it has no runtime presence."
+  },
+  {
+    "id": "ts-004",
+    "language": "typescript",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "const a: number | null = 0;\nconsole.log(a ?? 99);",
+    "answer": "0",
+    "acceptedAnswers": ["0"],
+    "choices": [
+      "0",
+      "99",
+      "null",
+      "undefined"
+    ],
+    "hints": [
+      "`??` is the nullish coalescing operator, not the same as `||`.",
+      "`??` only falls through when the left side is null OR undefined.",
+      "0 is not nullish — it's a valid number — so the left side is returned."
+    ],
+    "explanation": "`||` triggers on any falsy value (0, '', false, NaN, null, undefined). `??` only triggers on null or undefined, which is usually what you actually want for defaults."
+  },
+  {
+    "id": "ts-005",
+    "language": "typescript",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "enum Status { Active = \"ACTIVE\", Inactive = \"INACTIVE\" }\nconsole.log(Status.Active);",
+    "answer": "ACTIVE",
+    "acceptedAnswers": ["ACTIVE", "\"ACTIVE\""],
+    "hints": [
+      "This is a STRING enum, not numeric.",
+      "Members have explicit string values.",
+      "Status.Active is the literal string 'ACTIVE'."
+    ],
+    "explanation": "String enums are values you explicitly assign. They don't get reverse mapping like numeric enums do."
+  },
+  {
+    "id": "java-001",
+    "language": "java",
+    "difficulty": 2,
+    "answerMode": "choice",
+    "code": "Integer a = 100;\nInteger b = 100;\nInteger c = 200;\nInteger d = 200;\nSystem.out.println(a == b);\nSystem.out.println(c == d);",
+    "answer": "true\nfalse",
+    "acceptedAnswers": ["true\nfalse"],
+    "choices": [
+      "true\nfalse",
+      "false\ntrue",
+      "true\ntrue",
+      "false\nfalse"
+    ],
+    "hints": [
+      "`==` on Integer objects compares references, not values.",
+      "Java caches small Integer objects in a fixed range.",
+      "The cache covers -128 to 127. 100 is cached (same reference), 200 is not."
+    ],
+    "explanation": "Java's IntegerCache reuses boxed Integer instances for -128..127. Outside that range, autoboxing creates fresh objects, so `==` returns false. Always use `.equals()` to compare boxed numbers by value."
+  },
+  {
+    "id": "java-002",
+    "language": "java",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "String a = \"hello\";\nString b = \"hello\";\nSystem.out.println(a == b);",
+    "answer": "true",
+    "acceptedAnswers": ["true"],
+    "hints": [
+      "String literals in Java are stored in a special place.",
+      "The JVM interns string literals so equal literals share one object.",
+      "Both a and b point to the same interned 'hello'."
+    ],
+    "explanation": "Java's string pool dedupes string literals at compile time and class loading. Both literals refer to the same interned object."
+  },
+  {
+    "id": "java-003",
+    "language": "java",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "String a = \"hello\";\nString b = new String(\"hello\");\nSystem.out.println(a == b);",
+    "answer": "false",
+    "acceptedAnswers": ["false"],
+    "hints": [
+      "`new String(...)` always creates a fresh object on the heap.",
+      "It does NOT use the string pool.",
+      "So a (interned literal) and b (new heap object) are different references."
+    ],
+    "explanation": "`new String(\"hello\")` bypasses interning and allocates a new String. Use `.equals()` for value comparison; or call `.intern()` to opt back into the pool."
+  },
+  {
+    "id": "java-004",
+    "language": "java",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "System.out.println(5 / 2);",
+    "answer": "2",
+    "acceptedAnswers": ["2"],
+    "hints": [
+      "Both operands are int literals.",
+      "Java does integer division when both operands are integers.",
+      "5 / 2 truncates toward zero — there's no decimal."
+    ],
+    "explanation": "Integer-int division truncates. Use `5.0 / 2` or `(double) 5 / 2` to get 2.5."
+  },
+  {
+    "id": "java-005",
+    "language": "java",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "System.out.println(Integer.MAX_VALUE + 1);",
+    "answer": "-2147483648",
+    "acceptedAnswers": ["-2147483648"],
+    "hints": [
+      "Integer.MAX_VALUE is 2147483647 (2^31 - 1).",
+      "Java int overflow silently wraps using two's complement.",
+      "MAX_VALUE + 1 wraps to Integer.MIN_VALUE."
+    ],
+    "explanation": "Java ints are 32-bit two's complement. Overflow is silent and wraps around — no exception. Use `Math.addExact` to opt into overflow checking."
+  },
+  {
+    "id": "java-006",
+    "language": "java",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "System.out.println(\"Result: \" + 1 + 2);",
+    "answer": "Result: 12",
+    "acceptedAnswers": ["Result: 12"],
+    "hints": [
+      "`+` is left-associative.",
+      "Once a String appears on the left, every subsequent `+` becomes string concatenation.",
+      "(\"Result: \" + 1) + 2  →  \"Result: 1\" + 2  →  \"Result: 12\"."
+    ],
+    "explanation": "String concatenation in Java propagates left-to-right. To force numeric addition first, parenthesize: `\"Result: \" + (1 + 2)` gives `Result: 3`."
+  },
+  {
+    "id": "cpp-001",
+    "language": "cpp",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "#include <iostream>\nint main() {\n    std::cout << sizeof(char);\n}",
+    "answer": "1",
+    "acceptedAnswers": ["1"],
+    "hints": [
+      "`sizeof` returns size in bytes.",
+      "The C++ standard defines this for `char` exactly.",
+      "By definition, sizeof(char) is always 1, on every conforming platform."
+    ],
+    "explanation": "The C++ standard defines a byte as the size of a char, so sizeof(char) is 1 by definition — even on systems where a 'byte' isn't 8 bits."
+  },
+  {
+    "id": "cpp-002",
+    "language": "cpp",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "#include <iostream>\nint main() {\n    std::cout << 7 / 2;\n}",
+    "answer": "3",
+    "acceptedAnswers": ["3"],
+    "hints": [
+      "Both operands are int literals.",
+      "When both sides are int, C++ does integer division.",
+      "7 / 2 = 3 (truncated toward zero)."
+    ],
+    "explanation": "C++ integer division truncates toward zero. Use 7.0 / 2 or static_cast<double>(7) / 2 to get 3.5."
+  },
+  {
+    "id": "cpp-003",
+    "language": "cpp",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "#include <iostream>\nint main() {\n    int arr[] = {10, 20, 30, 40};\n    int* p = arr;\n    p += 2;\n    std::cout << *p;\n}",
+    "answer": "30",
+    "acceptedAnswers": ["30"],
+    "hints": [
+      "`p` initially points at arr[0].",
+      "Pointer arithmetic moves in units of the pointed-to type, not bytes.",
+      "p += 2 advances by 2 ints, so p points at arr[2] = 30."
+    ],
+    "explanation": "Pointer arithmetic scales by the size of the pointee. Adding 2 to an int* moves it 2*sizeof(int) bytes."
+  },
+  {
+    "id": "cpp-004",
+    "language": "cpp",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "#include <iostream>\nint main() {\n    char c = 'A' + 1;\n    std::cout << c;\n}",
+    "answer": "B",
+    "acceptedAnswers": ["B"],
+    "hints": [
+      "Char literals like 'A' have integer values (ASCII).",
+      "'A' is 65; 'A' + 1 is 66.",
+      "When stored in a char and printed via std::cout, char prints as a character — 66 is 'B'."
+    ],
+    "explanation": "std::cout's operator<< treats `char` as a character (not a number). 'A' (65) + 1 = 66 = 'B'."
+  },
+  {
+    "id": "cpp-005",
+    "language": "cpp",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "#include <iostream>\nint main() {\n    std::cout << (true + true);\n}",
+    "answer": "2",
+    "acceptedAnswers": ["2"],
+    "hints": [
+      "`true` and `false` are bool, but they participate in arithmetic.",
+      "bool is implicitly promoted to int (true → 1, false → 0).",
+      "true + true is 1 + 1 = 2."
+    ],
+    "explanation": "Bool values promote to int (1 or 0) during arithmetic. The result is an int, which prints as '2'."
+  },
+  {
+    "id": "go-001",
+    "language": "go",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n    var s []int\n    fmt.Println(len(s))\n}",
+    "answer": "0",
+    "acceptedAnswers": ["0"],
+    "hints": [
+      "`var s []int` declares a slice without initializing it.",
+      "An uninitialized slice is the zero value: nil.",
+      "len(nil slice) is defined to be 0 (no panic)."
+    ],
+    "explanation": "Nil slices behave like empty slices for `len`, `cap`, and `range`. You can even `append` to a nil slice — it allocates a backing array."
+  },
+  {
+    "id": "go-002",
+    "language": "go",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n    a := []int{1, 2, 3}\n    b := a[:2]\n    b[0] = 99\n    fmt.Println(a[0])\n}",
+    "answer": "99",
+    "acceptedAnswers": ["99"],
+    "hints": [
+      "Slicing does NOT copy the underlying array.",
+      "`b` shares its backing array with `a`.",
+      "Writing to b[0] writes to the same memory as a[0]."
+    ],
+    "explanation": "Go slice headers are (pointer, len, cap). Slicing creates a new header pointing into the same array. Use `append` with care or `copy` to get an independent slice."
+  },
+  {
+    "id": "go-003",
+    "language": "go",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "package main\nimport \"fmt\"\nfunc main() {\n    var x int\n    var s string\n    fmt.Println(x, s == \"\")\n}",
+    "answer": "0 true",
+    "acceptedAnswers": ["0 true"],
+    "hints": [
+      "Go always initializes variables to their type's zero value.",
+      "Zero value of int is 0; zero value of string is the empty string.",
+      "fmt.Println separates arguments with a space."
+    ],
+    "explanation": "Go has no 'undefined' or 'null' for primitive types — every type has a well-defined zero value. This avoids a whole class of uninitialized-variable bugs."
+  },
+  {
+    "id": "go-004",
+    "language": "go",
+    "difficulty": 3,
+    "answerMode": "choice",
+    "code": "package main\nimport \"fmt\"\ntype E interface{}\nfunc ret() E {\n    var p *int = nil\n    return p\n}\nfunc main() {\n    e := ret()\n    fmt.Println(e == nil)\n}",
+    "answer": "false",
+    "acceptedAnswers": ["false"],
+    "choices": [
+      "false",
+      "true",
+      "<nil>",
+      "panic: nil pointer dereference"
+    ],
+    "hints": [
+      "An interface value has two parts: a type and a value.",
+      "An interface is `nil` only when BOTH the type and the value are nil.",
+      "Returning a nil *int gives an interface with type=*int, value=nil — not equal to untyped nil."
+    ],
+    "explanation": "The notorious 'nil interface' bug. Once a typed nil enters an interface, the interface itself is no longer nil. Return untyped nil explicitly, or check `reflect.ValueOf(e).IsNil()`."
+  },
+  {
+    "id": "go-005",
+    "language": "go",
+    "difficulty": 3,
+    "answerMode": "choice",
+    "code": "// Go 1.21 (pre-1.22 range-variable capture)\npackage main\nimport \"fmt\"\nfunc main() {\n    funcs := []func(){}\n    for _, v := range []int{1, 2, 3} {\n        funcs = append(funcs, func() { fmt.Println(v) })\n    }\n    for _, f := range funcs {\n        f()\n    }\n}",
+    "answer": "3\n3\n3",
+    "acceptedAnswers": ["3\n3\n3"],
+    "choices": [
+      "3\n3\n3",
+      "1\n2\n3",
+      "0\n1\n2",
+      "2\n2\n2"
+    ],
+    "hints": [
+      "Pre-Go 1.22: the loop variable `v` is a SINGLE variable reused each iteration.",
+      "All three closures capture the same `v` by reference.",
+      "After the loop, v holds its last value (3); all three closures print 3."
+    ],
+    "explanation": "Go 1.22 changed this so each iteration gets its own variable. Older code relied on the shared-variable behavior — common bug source. Workaround pre-1.22: `v := v` inside the loop."
+  },
+  {
+    "id": "rust-001",
+    "language": "rust",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "fn main() {\n    let x = 5;\n    let y = x;\n    println!(\"{} {}\", x, y);\n}",
+    "answer": "5 5",
+    "acceptedAnswers": ["5 5"],
+    "hints": [
+      "If x were a `String`, this would fail to compile due to a move.",
+      "`i32` implements the `Copy` trait, so assignment copies the bits.",
+      "After `let y = x`, both x and y are valid and equal to 5."
+    ],
+    "explanation": "Primitive types like i32 are `Copy` — assignment duplicates the value rather than moving it. Owned heap types like String move by default."
+  },
+  {
+    "id": "rust-002",
+    "language": "rust",
+    "difficulty": 2,
+    "answerMode": "text",
+    "code": "fn main() {\n    let x = 5;\n    let x = x + 1;\n    let x = x * 2;\n    println!(\"{}\", x);\n}",
+    "answer": "12",
+    "acceptedAnswers": ["12"],
+    "hints": [
+      "`let x = ...` with the same name SHADOWS the previous binding.",
+      "Each `let` evaluates its right-hand side using the current `x`, then rebinds.",
+      "5 → 5 + 1 = 6 → 6 * 2 = 12."
+    ],
+    "explanation": "Rust shadowing differs from mutation: each `let` creates a fresh binding (potentially a different type) while the previous binding goes out of scope."
+  },
+  {
+    "id": "rust-003",
+    "language": "rust",
+    "difficulty": 3,
+    "answerMode": "text",
+    "code": "fn main() {\n    let v: Vec<i32> = (1..=5).filter(|x| x % 2 == 0).collect();\n    println!(\"{:?}\", v);\n}",
+    "answer": "[2, 4]",
+    "acceptedAnswers": ["[2, 4]", "[2,4]"],
+    "hints": [
+      "`1..=5` is the inclusive range 1, 2, 3, 4, 5.",
+      "`filter` keeps elements where the closure returns true — here, the even ones.",
+      "`{:?}` formats with Debug; for a Vec that prints as `[a, b, c]`."
+    ],
+    "explanation": "Iterators in Rust are lazy until consumed by something like `collect`. The filter closure receives a reference (`&i32`), which we pattern-match as `x` and dereference implicitly via `%`."
+  },
+  {
+    "id": "rust-004",
+    "language": "rust",
+    "difficulty": 1,
+    "answerMode": "text",
+    "code": "fn main() {\n    println!(\"{}\", 7 / 2);\n}",
+    "answer": "3",
+    "acceptedAnswers": ["3"],
+    "hints": [
+      "Both operands are integer literals; Rust infers a default integer type (i32).",
+      "Integer division in Rust truncates toward zero.",
+      "7 / 2 = 3."
+    ],
+    "explanation": "Rust integer division truncates toward zero, like C/Java/Go. Use `7.0 / 2.0` for floating-point division."
+  },
+  {
+    "id": "rust-005",
+    "language": "rust",
+    "difficulty": 3,
+    "answerMode": "choice",
+    "code": "// Compiled in DEBUG mode\nfn main() {\n    let x: u8 = 255;\n    let y = x + 1;\n    println!(\"{}\", y);\n}",
+    "answer": "panic: attempt to add with overflow",
+    "acceptedAnswers": ["panic: attempt to add with overflow"],
+    "choices": [
+      "panic: attempt to add with overflow",
+      "0",
+      "256",
+      "1"
+    ],
+    "hints": [
+      "u8's range is 0..=255. 255 + 1 cannot fit.",
+      "Rust handles overflow differently in debug vs release builds.",
+      "In DEBUG builds, integer overflow panics. In release, it wraps silently."
+    ],
+    "explanation": "Rust's arithmetic operators panic on overflow in debug builds and wrap in release. Use `wrapping_add`, `checked_add`, `saturating_add`, or `overflowing_add` to make the behavior explicit and consistent."
+  }
+]
