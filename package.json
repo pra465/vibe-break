@@ -25,6 +25,9 @@
                 "arch": "universal"
             }
         },
+        "dmg": {
+            "artifactName": "Vibe-Break-${version}-macOS.${ext}"
+        },
         "win": {
             "target": [
                 { "target": "nsis", "arch": ["x64"] },
@@ -34,7 +37,11 @@
         "nsis": {
             "oneClick": false,
             "perMachine": false,
-            "allowToChangeInstallationDirectory": true
+            "allowToChangeInstallationDirectory": true,
+            "artifactName": "Vibe-Break-${version}-Windows-Setup.${ext}"
+        },
+        "portable": {
+            "artifactName": "Vibe-Break-${version}-Windows-Portable.${ext}"
         },
         "files": [
             "src/**/*",
