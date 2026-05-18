@@ -61,7 +61,8 @@
   .shell .runner-wrap,
   .shell .shooter-wrap,
   .shell .chess-board,
-  .shell .taxi-wrap {
+  .shell .taxi-wrap,
+  .shell .ghostman-wrap {
     -webkit-app-region: no-drag;
   }
   header {
@@ -437,6 +438,27 @@
     color: var(--accent-bright);
   }
 
+  /* ---------- Ghost Man Advanced ---------- */
+  .ghostman-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #080816;
+  }
+  .ghostman-canvas {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   /* ---------- Taxi game ---------- */
   .taxi-wrap {
     position: relative;
@@ -552,6 +574,7 @@
         <option value="shooter">Shooter</option>
         <option value="chess">Chess</option>
         <option value="taxi">Taxi</option>
+        <option value="ghostman">Ghost Man</option>
       </select>
       <div class="pill" id="status">0 moves</div>
     </div>
@@ -574,6 +597,7 @@
 <script src="games/shooter.js"></script>
 <script src="games/chess.js"></script>
 <script src="games/taxi.js"></script>
+<script src="games/ghostman.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

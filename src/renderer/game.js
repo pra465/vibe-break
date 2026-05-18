@@ -10,6 +10,7 @@ const GAMES = {
   shooter: window.ShooterGame,
   chess:   window.ChessGame,
   taxi:    window.TaxiGame,
+  ghostman: window.GhostManGame,
 };
 
 const container  = document.getElementById('game-container');

@@ -5,7 +5,9 @@
     "main": "src/main.js",
     "scripts": {
         "start": "electron .",
-        "build": "electron-builder --mac"
+        "build": "electron-builder --mac",
+        "build:win": "electron-builder --win",
+        "build:all": "electron-builder -mw"
     },
     "author": "",
     "license": "MIT",
@@ -22,6 +24,17 @@
                 "target": "dmg",
                 "arch": "universal"
             }
+        },
+        "win": {
+            "target": [
+                { "target": "nsis", "arch": ["x64"] },
+                { "target": "portable", "arch": ["x64"] }
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": false,
+            "allowToChangeInstallationDirectory": true
         },
         "files": [
             "src/**/*",
